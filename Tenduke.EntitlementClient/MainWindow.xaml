@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tenduke.EntitlementClient"
         mc:Ignorable="d"
-        Title="10Duke Entitlement" Height="881.1" Width="800" MinWidth="800">
+        Title="10Duke Entitlement" Height="904.1" Width="800" MinWidth="800">
     <Grid>
         <GroupBox x:Name="GroupBoxConnect" Header="Connect (OAuth 2.0 Implicit Grant Flow)" Height="148" Margin="10,10,10,0" VerticalAlignment="Top">
             <Grid>
                 <Label x:Name="LabelAuthzUrl" Content="Authorization URL" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.424,1.254"/>
                 <TextBox x:Name="TextBoxAuthzUrl" Height="23" Margin="116,14,10,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
-                <TextBlock IsHitTestVisible="False" Text="OAuth 2.0 authorization endpoint, e.g. https://my.entitlement.server/oauth2/authz" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="119,15,0,95" Foreground="DarkGray">
+                <TextBlock IsHitTestVisible="False" Text="OAuth 2.0 authorization endpoint, e.g. https://my.entitlement.server/oauth2/authz" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="119,15,0,95" Foreground="DarkGray">
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
                             <Setter Property="Visibility" Value="Collapsed"/>
@@ -25,7 +25,7 @@
                 </TextBlock>
                 <Label x:Name="LabelClientId" Content="Client id" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
                 <TextBox x:Name="TextBoxClientId" Height="23" Margin="116,45,10,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
-                <TextBlock IsHitTestVisible="False" Text="OAuth 2.0 client id, as configured on the server" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="119,46,0,64" Foreground="DarkGray">
+                <TextBlock IsHitTestVisible="False" Text="OAuth 2.0 client id, as configured on the server" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="119,46,0,64" Foreground="DarkGray">
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
                             <Setter Property="Visibility" Value="Collapsed"/>
@@ -49,11 +49,11 @@
 
             </Grid>
         </GroupBox>
-        <GroupBox x:Name="GroupBoxEntitlement" Header="Check / consume" Height="148" Margin="10,241,10,0" VerticalAlignment="Top">
+        <GroupBox x:Name="GroupBoxEntitlement" Header="Check / consume" Height="181" Margin="10,241,10,0" VerticalAlignment="Top">
             <Grid>
                 <Label x:Name="LabelEntUrl" Content="Entitlement URL" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
                 <TextBox x:Name="TextBoxEntUrl" Height="23" Margin="130,14,10,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
-                <TextBlock IsHitTestVisible="False" Text="URL ending with /authz/.jwt, e.g. https://my.entitlement.server/authz/.jwt" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="133,15,0,95" Foreground="DarkGray">
+                <TextBlock IsHitTestVisible="False" Text="URL ending with /authz/.jwt, e.g. https://my.entitlement.server/authz/.jwt" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="133,15,0,128" Foreground="DarkGray">
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
                             <Setter Property="Visibility" Value="Collapsed"/>
@@ -67,7 +67,7 @@
                 </TextBlock>
                 <Label x:Name="LabelAuthzQuery" Content="Authorization query" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
                 <TextBox x:Name="TextBoxAuthzQuery" Height="23" Margin="130,45,10,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
-                <TextBlock IsHitTestVisible="False" Text="Licensed items separated by ampersand, e.g. MyLicensedItem1&amp;MyLicensedItem2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="133,46,0,64" Foreground="DarkGray">
+                <TextBlock IsHitTestVisible="False" Text="Licensed items separated by ampersand, e.g. MyLicensedItem1&amp;MyLicensedItem2" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="133,46,0,97" Foreground="DarkGray">
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
                             <Setter Property="Visibility" Value="Collapsed"/>
@@ -79,19 +79,21 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <CheckBox x:Name="CheckBoxConsume" Content="Consume" HorizontalAlignment="Left" Margin="130,78,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.514,-4.6" Checked="CheckBoxConsume_Checked"/>
-                <Label x:Name="LabelConsumptionMode" Content="Consumption mode" HorizontalAlignment="Center" Margin="240,72,375,0" VerticalAlignment="Top" RenderTransformOrigin="0.235,0.615" IsEnabled="False"/>
-                <ComboBox x:Name="ComboBoxConsumptionMode" HorizontalAlignment="Center" Margin="360,76,260,0" VerticalAlignment="Top" Width="120" IsReadOnly="True" SelectedIndex="0" IsEnabled="False">
+                <CheckBox x:Name="CheckBoxConsume" Content="Consume" HorizontalAlignment="Left" Margin="130,112,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.514,-4.6" Checked="CheckBoxConsume_Checked" Unchecked="CheckBoxConsume_Unchecked"/>
+                <Label x:Name="LabelConsumptionMode" Content="Consumption mode" HorizontalAlignment="Center" Margin="248,106,385,0" VerticalAlignment="Top" RenderTransformOrigin="0.235,0.615" IsEnabled="False" Width="117"/>
+                <ComboBox x:Name="ComboBoxConsumptionMode" HorizontalAlignment="Center" Margin="370,110,270,0" VerticalAlignment="Top" Width="110" IsReadOnly="True" SelectedIndex="0" IsEnabled="False">
                     <ComboBoxItem Name="ConsumptionMode_Cache">cache</ComboBoxItem>
                     <ComboBoxItem Name="ConsumptionMode_CheckOut">checkOut</ComboBoxItem>
                 </ComboBox>
-                <Label x:Name="LabelConsumeDuration" Content="Duration (ms)" HorizontalAlignment="Right" Margin="0,72,135,0" VerticalAlignment="Top" IsEnabled="False"/>
-                <TextBox x:Name="TextBoxConsumeDuration" HorizontalAlignment="Right" Height="23" Margin="0,75,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.3,0.565" IsEnabled="False" PreviewTextInput="TextBoxConsumeDuration_PreviewTextInput"/>
-                <Button x:Name="ButtonAuthz" Content="Check" Margin="320,103,320,0" VerticalAlignment="Top" Width="100" Click="ButtonAuthz_Click"/>
+                <Label x:Name="LabelConsumeDuration" Content="Duration (ms)" HorizontalAlignment="Right" Margin="0,106,135,0" VerticalAlignment="Top" IsEnabled="False"/>
+                <TextBox x:Name="TextBoxConsumeDuration" HorizontalAlignment="Right" Height="23" Margin="0,109,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.3,0.565" IsEnabled="False" PreviewTextInput="TextBoxConsumeDuration_PreviewTextInput"/>
+                <Button x:Name="ButtonAuthz" Content="Check" Margin="325,137,325,0" VerticalAlignment="Top" Width="100" Click="ButtonAuthz_Click"/>
+                <Label x:Name="LabelHardwareId" Content="Hardware ID" HorizontalAlignment="Left" Margin="10,73,0,0" VerticalAlignment="Top"/>
+                <TextBox x:Name="TextBoxHardwareId" Height="23" Margin="130,76,10,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
 
             </Grid>
         </GroupBox>
-        <GroupBox x:Name="GroupBoxAuthorizationResult" Header="Check / consumer result" Margin="10,394,10,10">
+        <GroupBox x:Name="GroupBoxAuthorizationResult" Header="Check / consumer result" Margin="10,427,10,10">
             <Grid>
                 <Label x:Name="LabelRawResult" Content="Raw response" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
                 <TextBox x:Name="TextBoxRawResult" Height="115" Margin="10,36,10,0" TextWrapping="Wrap" VerticalAlignment="Top" TextChanged="TextBoxRawResult_TextChanged"/>

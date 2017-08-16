@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -30,6 +32,9 @@ namespace Tenduke.EntitlementClient
         public MainWindow()
         {
             InitializeComponent();
+
+            var defaultHardwareId = ComputeHardwareId();
+            TextBoxHardwareId.Text = defaultHardwareId;
         }
 
         /// <summary>
@@ -94,13 +99,14 @@ namespace Tenduke.EntitlementClient
 
             // parameters for the entitlement request
             var authzQuery = TextBoxAuthzQuery.Text;
+            var hwId = TextBoxHardwareId.Text;
             var consume = CheckBoxConsume.IsChecked.GetValueOrDefault();
             var consumptionMode = ComboBoxConsumptionMode.Text;
             var durationText = Regex.Replace(TextBoxConsumeDuration.Text, @"\s+", "");
             var duration = string.IsNullOrEmpty(durationText) ? (long?)null : long.Parse(durationText);
 
             // build full URL for an entitlement request
-            var entUrl = BuildEntUrl(entEndpointUrl, authzQuery, consume, consumptionMode, duration);
+            var entUrl = BuildEntUrl(entEndpointUrl, authzQuery, hwId, consume, consumptionMode, duration);
 
             // HTTP entitlement request
             var entRequest = WebRequest.CreateHttp(entUrl);
@@ -139,16 +145,21 @@ namespace Tenduke.EntitlementClient
         /// </summary>
         /// <param name="entEndpointUrl">URL of the server endpoint for the authorization / entitlement request.</param>
         /// <param name="authzQuery">Names of items to authorize, ampersand separated (e.g. MyLicense1&MyLicense2).</param>
+        /// <param name="hwId">Unique identifier of the client / hardware doing the authorization / license request.</param>
         /// <param name="consume">If false, only checks if authorization is granted. If true, consumes a license.</param>
         /// <param name="consumptionMode">Consumption mode, <c>cache</c> or <c>checkOut</c>.</param>
         /// <param name="duration">Consumption duration in milliseconds, or <c>null</c> for server default.</param>
         /// <returns>Uri for calling the authz endpoint.</returns>
-        private Uri BuildEntUrl(Uri entEndpointUrl, string authzQuery, bool consume, string consumptionMode, long? duration)
+        private Uri BuildEntUrl(Uri entEndpointUrl, string authzQuery, string hwId, bool consume, string consumptionMode, long? duration)
         {
             var uriBuilder = new UriBuilder(entEndpointUrl);
             var baseQuery = uriBuilder.Query == null || uriBuilder.Query.Length <= 1 ? string.Empty : uriBuilder.Query.Substring(1) + "&";
             var queryBuilder = new StringBuilder(baseQuery);
             queryBuilder.Append("doConsume=").Append(consume ? "true" : "false");
+            if (!string.IsNullOrEmpty(hwId))
+            {
+                queryBuilder.Append("&hw=").Append(HttpUtility.UrlEncode(hwId));
+            }
             if (consume)
             {
                 queryBuilder.Append("&consumptionMode=").Append(consumptionMode);
@@ -157,20 +168,45 @@ namespace Tenduke.EntitlementClient
                     queryBuilder.Append("&consumptionDuration=").Append(duration);
                 }
             }
+
+            // assuming here that URL encoding is not needed, i.e. that authorized item names are URL safe
             queryBuilder.Append("&").Append(authzQuery);
             uriBuilder.Query = queryBuilder.ToString();
             return uriBuilder.Uri;
         }
 
         /// <summary>
-        /// Handles checking / unchecking the checkbox that is used for controlling whether
+        /// Handles checking the checkbox that is used for controlling whether
         /// authorization / entitlement request is just a check or license consumption.
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event arguments.</param>
         private void CheckBoxConsume_Checked(object sender, RoutedEventArgs e)
         {
-            var consume = CheckBoxConsume.IsChecked.GetValueOrDefault();
+            CheckBoxConsume_ChangeChecked(true, sender, e);
+        }
+
+        /// <summary>
+        /// Handles unchecking the checkbox that is used for controlling whether
+        /// authorization / entitlement request is just a check or license consumption.
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
+        private void CheckBoxConsume_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CheckBoxConsume_ChangeChecked(false, sender, e);
+        }
+
+        /// <summary>
+        /// Handles checking or unchecking the checkbox that is used for controlling whether
+        /// authorization / entitlement request is just a check or license consumption.
+        /// </summary>
+        /// <param name="consume"><c>true</c> if the checkbox has been set to checked state and
+        /// the request should consume license, <c>false</c> otherwise.</param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
+        private void CheckBoxConsume_ChangeChecked(bool consume, object sender, RoutedEventArgs e)
+        {
             LabelConsumptionMode.IsEnabled = consume;
             ComboBoxConsumptionMode.IsEnabled = consume;
             LabelConsumeDuration.IsEnabled = consume;
@@ -238,6 +274,35 @@ namespace Tenduke.EntitlementClient
             }
 
             TextBoxParsedPayload.Text = parsedPayload;
+        }
+
+        /// <summary>
+        /// Computes a hardware id for the purpose of the test application. This sample implementation simply uses
+        /// SHA-1 hash of baseboard serial number. In real implementations, more data could be added before computing
+        /// the hash. The data to add is always dependent on customer requirements, but may include data related
+        /// to hardware, OS or the user etc.
+        /// </summary>
+        /// <returns>Hardware id as a string.</returns>
+        private string ComputeHardwareId()
+        {
+            var baseString = new StringBuilder();
+
+            var mngmntObjectSearcher = new ManagementObjectSearcher("SELECT SerialNumber FROM Win32_BaseBoard");
+            var mngmntObjects = mngmntObjectSearcher.Get();
+            foreach (var mngmntObject in mngmntObjects)
+            {
+                baseString.Append(mngmntObject["SerialNumber"].ToString());
+            }
+
+            string retValue;
+            using (var sha1 = new SHA1Managed())
+            {
+                var hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(baseString.ToString()));
+                // URL safe Base64
+                retValue = Convert.ToBase64String(hash).TrimEnd('=').Replace("+", "-").Replace("/", "_");
+            }
+
+            return retValue;
         }
     }
 }
