@@ -1,0 +1,133 @@
+== .NET client library for the 10Duke Entitlement service
+
+Client library for .NET desktop applications, for using services of the 10Duke Entitlement. Main features are:
+
+* OAuth 2.0 authorization / sign-on using an embedded browser. Since the 10Duke Entitlement service provides identity-based entitlement services, the OAuth process establishes both authorization for the client application and the user identity.
+* Checking and consuming licenses
+* Releasing consumed licenses
+* Checking end-user permissions
+
+=== CefSharp embedded browser and Any CPU support
+
+The embedded browser used for sign-on and OAuth 2.0 authorization is implemented with https://github.com/cefsharp/CefSharp[CefSharp]. The implementation supports the +Any CPU+ platform, and CefSharp platform dependent resources must be made available in an application that uses this client library. See more about https://github.com/cefsharp/CefSharp/issues/1714[CefSharp AnyCPU support]. The easiest way to make the CefSharp resources available is to use NuGet for adding a reference to CefSharp in the application.
+
+=== Basic usage
+
+Class +Tenduke.EntitlementClient.EntClient+ implements the 10Duke Entitlement service client. This chapter introduces configuration and features of +Tenduke.EntitlementClient.EntClient+.
+
+==== EntClient configuration
+
+Class +Tenduke.EntitlementClient.Config.AuthorizationCodeGrantConfig+ is used for configuring OAuth 2.0 access.
+
+.Basic OAuth 2.0 configuration for the client
+[source,csharp]
+----
+var oauthConfig = new Tenduke.EntitlementClient.Config.AuthorizationCodeGrantConfig()
+{
+    AuthzUri = "https://10duke-ent.example.com/oauth2/authz/",
+    TokenUri = "https://10duke-ent.example.com/oauth2/access/",
+    ClientID = "MyApp",
+    ClientSecret = "verysecret",
+    RedirectUri = "oob:MyApp",
+    Scope = "openid profile email",
+    SignerKey = EntServiceRsaPublicKey
+}
+var entClient = new EntClient()  { OAuthConfig = oauthConfig };
+----
+
+Value of the +SignerKey+ property is an instance of the +System.Security.Cryptography.RSA+ class, describing an RSA public key for verifying signatures of tokens received from the 10Duke Entitlement service.
+
+For basic usage with defaults, this OAuth configuration is sufficient for starting to use the client.
+
+==== Application-wide static initialization and cleanup
+
+When an application using this client library is started, it must call one of the static +Initialize+ methods of class +Tenduke.EntitlementClient.EntClient+. This is necessary for initializing +CefSharp+.
+
+.Static initialization with defaults
+[source,csharp]
+----
+EntClient.Initialize();
+----
+
+The code above calls the zero-argument +Initialize+ method, initializing +CefSharp+ with default settings. With these default settings, the +CefSharp+ platform dependent resources must be available in +x86+ and +x64+ subdirectories of the directory of your application (the directory of the application exe file).
+
+For specifying another base directory instead of the application base directory, the another +Initialize+ overload can be used:
+
+.Static initialization with custom CefSharp resources base directory
+[source,csharp]
+----
+var cefSharpResolverArgs = new Tenduke.EntitlementClient.Util.CefSharpResolverArgs()
+{
+    BaseDir = "custom/base/dir"
+}
+EntClient.Initialize(cefSharpResolverArgs);
+----
+
+One of these +Initialize+ overloads must be called once in the lifecycle of your application, before instantiating and using an instance of +Tenduke.EntitlementClient.EntClient+ for the first time.
+
+Respectively, when your application is shutting down or is not going to use +Tenduke.EntitlementClient.EntClient+ anymore, the static +Shutdown+ method must be called.
+
+.Static clean-up
+[source,csharp]
+----
+EntClient.Shutdown();
+----
+
+==== OAuth 2.0 authorization and user sign-on
+
+An instance of +Tenduke.EntitlementClient.EntClient+ must first authenticate user and obtain OAuth authorization. This is done by calling +AuthorizeSync+ that opens a modal form that allows user to log in. The form uses an embedded browser for displaying login screen from the server.
+
+.User sign-on and OAuth 2.0 authorization
+[source,csharp]
+----
+var entClient = new EntClient()  { ... EntClient configurations ... };
+entClient.AuthorizeSync();
+if (entClient.IsAuthorized())
+{
+    // Success, the EntClient instance is ready to use
+}
+else
+{
+   // The login form was closed by the user, login and OAuth authorization not completed
+}
+----
+
+==== Consuming licenses
+
+Licenses can be checked, consumed and released using the +AuthzApi+ property of a +Tenduke.EntitlementClient.EntClient+ instance with successful authorization. The +CheckOrConsume+ method can be used for consuming licenses.
+
+.Checking out (consuming) a license
+[source,csharp]
+----
+var entClient = ... an EntClient instance with successful authorization ...;
+
+// Name of the license to consume
+string licenseToCheck = "CoolLicensedFeature";
+// I want a license token response, in JWT format. The response will
+// be parsed and token signature will be verified automatically.
+Tenduke.EntitlementClient.EntApi.ResponseType responseType = Tenduke.EntitlementClient.EntApi.ResponseType.JWT;
+// I want to start using the licensed feature, i.e. check out the license
+bool consume = true;
+
+Tenduke.EntitlementClient.EntApi.Authz.AuthorizationDecision response = entClient.AuthzApi.CheckOrConsume(licenseToCheck, responseType, consume);
+
+// The AuthorizationDecision response object describes success of the
+// request with metadata. Basic success check example below:
+bool success = response[licenseToCheck];
+// The jti response attribute can be used later for releasing the checked
+// out license
+string checkOutId = response["jti"];
+----
+
+A consumed (checked out) license can be released by calling +ReleaseLicense+.
+
+.Checking out (consuming) a license
+[source,csharp]
+----
+var entClient = ... an EntClient instance with successful authorization ...;
+string checkOutId = ... value of jti response attribute from calling CheckOrConsume ...;
+
+Tenduke.EntitlementClient.EntApi.ResponseType responseType = Tenduke.EntitlementClient.EntApi.ResponseType.JWT;
+
+Tenduke.EntitlementClient.EntApi.Authz.AuthorizationDecision response = entClient.AuthzApi.ReleaseLicense(checkOutId, responseType);
+----

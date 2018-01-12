@@ -1,4 +1,6 @@
-.vs/
 obj/
 bin/
-packages/
+test-tmp/
+.vs/
+.DS_Store
+**/10duke-assembly-signer-key.snk
