@@ -39,7 +39,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>10duke-assembly-signer-key.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\10duke-assembly-signer-key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="jose-jwt, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -101,7 +101,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="10duke-assembly-signer-key.snk" />
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
