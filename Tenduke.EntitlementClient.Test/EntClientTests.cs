@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Tenduke.EntitlementClient.Authorization;
 using Tenduke.EntitlementClient.Config;
 using Tenduke.EntitlementClient.Util;
 
@@ -76,6 +77,27 @@ namespace Tenduke.EntitlementClient.Test
             Assert.IsNotNull(computerId, "Must return a computer id using the given configuration");
             Assert.AreEqual(computerId, instance.ComputerId, "Must return the same value for subsequent calls");
             Assert.AreNotEqual(new EntClient().ComputerId, computerId, "Must return different value than with default configuration");
+        }
+
+        [Test]
+        public void AuthzApiSuccess()
+        {
+            var instance = new EntClient();
+
+            var oauthConfig = new AuthorizationCodeGrantConfig()
+            {
+                AuthzUri = "https://test/authz/"
+            };
+            instance.OAuthConfig = oauthConfig;
+
+            var accessTokenResponse = AccessTokenResponse.FromResponseObject("{\"access_token\":\"testat\"}", null);
+            var authorization = new AuthorizationCodeGrant()
+            {
+                AccessTokenResponse = accessTokenResponse
+            };
+            instance.Authorization = authorization;
+
+            Assert.IsNotNull(instance.AuthzApi, "Initializing an AuthzApi instance for accessing the /authz/ API failed");
         }
     }
 }

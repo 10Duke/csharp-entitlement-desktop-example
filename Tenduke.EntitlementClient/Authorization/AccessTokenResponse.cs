@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 
@@ -78,6 +79,20 @@ namespace Tenduke.EntitlementClient.Authorization
         /// <param name="name">The access token field name.</param>
         /// <returns>Value of the response field, or <c>null</c> if no such field found or if response object not populated.</returns>
         public JValue this[string name] => ResponseObject?[name];
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccessTokenResponse"/> class by the given
+        /// access token JSON response.
+        /// </summary>
+        /// <param name="json">Access token response as a JSON string.</param>
+        /// <param name="verifyWithKey">RSA public key to use for verifying OpenID Connect ID token signature, if an ID token is present in the response.
+        /// If <c>null</c>, no verification is done.</param>
+        /// <returns><see cref="AccessTokenResponse"/> object wrapping the access token response received from the server.</returns>
+        public static AccessTokenResponse FromJsonStringResponse(string json, RSA verifyWithKey)
+        {
+            dynamic responseObj = JsonConvert.DeserializeObject(json);
+            return FromResponseObject(responseObj, verifyWithKey);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AccessTokenResponse"/> class by the given

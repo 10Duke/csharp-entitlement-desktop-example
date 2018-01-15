@@ -104,7 +104,7 @@ namespace Tenduke.EntitlementClient
         /// <summary>
         /// Authorization process result information received from the 10Duke Entitlement service.
         /// </summary>
-        public AuthorizationInfo Authorization { get; protected set; }
+        public AuthorizationInfo Authorization { get; set; }
 
         /// <summary>
         /// Gets an <see cref="AuthzApi"/> object for accessing the <c>/authz/</c> API of the 10Duke Entitlement service.
