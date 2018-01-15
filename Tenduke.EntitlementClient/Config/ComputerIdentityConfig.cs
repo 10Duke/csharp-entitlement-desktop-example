@@ -25,5 +25,10 @@ namespace Tenduke.EntitlementClient.Config
         /// <para>If value of <see cref="ComputerId"/> is not <c>null</c>, this property is ignored.</para>.
         /// </summary>
         public string AdditionalIdentifier { get; set; }
+
+        /// <summary>
+        /// Application specific salt to use for computing the computer identifier hash value.
+        /// </summary>
+        public string Salt { get; set; }
     }
 }

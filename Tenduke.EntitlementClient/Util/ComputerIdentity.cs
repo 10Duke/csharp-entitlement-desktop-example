@@ -15,6 +15,16 @@ namespace Tenduke.EntitlementClient.Util
     /// </summary>
     public static class ComputerIdentity
     {
+        #region Private fields
+
+        /// <summary>
+        /// Salt that is always used for computing the computer id salt. Application specific salt can
+        /// be specified in addition to this salt.
+        /// </summary>
+        private static readonly string ComputerIdSalt = "Û%Ý×õ ˜ä£œ*A’ç,5Ç";
+
+        #endregion
+
         #region Public constants
 
         /// <summary>
@@ -86,11 +96,14 @@ namespace Tenduke.EntitlementClient.Util
         /// </summary>
         /// <param name="customId">You own custom value to as a component of the computer identifier, may represent a single
         /// identifier or multiple identifiers concatenated. <c>null</c> for no custom / caller-specified computer id.</param>
+        /// <param name="salt">Application specific salt for computing the hash, or <c>null</c> for no application-specific salt.</param>
         /// <param name="identifyBy"><see cref="ComputerIdentifier"/> values to use as components for the computer identifier.</param>
         /// <returns>The computer identifier hash as a URL safe string.</returns>
-        public static string BuildComputerId(string customId, params ComputerIdentifier[] identifyBy)
+        public static string BuildComputerId(string customId, string salt, params ComputerIdentifier[] identifyBy)
         {
             var baseString = new StringBuilder();
+            baseString.Append(ComputerIdentity.ComputerIdSalt);
+
             if (!string.IsNullOrEmpty(customId))
             {
                 baseString.Append(customId);
@@ -115,6 +128,11 @@ namespace Tenduke.EntitlementClient.Util
                     default:
                         throw new NotSupportedException(string.Format("Computer identity value {0} not supported", requestedIdentifier.ToString()));
                 }
+            }
+
+            if (!string.IsNullOrEmpty(salt))
+            {
+                baseString.Append(salt);
             }
 
             using (var sha1 = new SHA1Managed())

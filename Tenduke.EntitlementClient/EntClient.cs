@@ -83,11 +83,11 @@ namespace Tenduke.EntitlementClient
                         : ComputerIdentityConfig.ComputeBy;
                     if (ComputerIdentityConfig == null)
                     {
-                        retValue = ComputerIdentity.BuildComputerId(null, idComponents);
+                        retValue = ComputerIdentity.BuildComputerId(null, null, idComponents);
                     }
                     else if (ComputerIdentityConfig.ComputerId == null)
                     {
-                        retValue = ComputerIdentity.BuildComputerId(ComputerIdentityConfig.AdditionalIdentifier, idComponents);
+                        retValue = ComputerIdentity.BuildComputerId(ComputerIdentityConfig.AdditionalIdentifier, ComputerIdentityConfig.Salt, idComponents);
                     }
                     else
                     {
