@@ -5,8 +5,13 @@ using Tenduke.EntitlementClient.Config;
 
 namespace Tenduke.EntitlementClient.Test
 {
+    /// <summary>
+    /// Tests using the embedded CefSharp browser. This test must be run in the test project output directory
+    /// with <c>nunit3-console.exe Tenduke.EntitlementClient.Test.dll --domain=None --inprocess</c>.
+    /// </summary>
     [Ignore("CefSharp must be run in default app domain. In order to run these tests, replace Ignore with TestFixture attribute, " +
         "and run the test using NUnit.ConsoleRunner with --domain=None --inprocess options.")]
+    //[TestFixture]
     class EntClientIntegrationTests
     {
         private static string oldWorkingDir;
@@ -48,7 +53,7 @@ namespace Tenduke.EntitlementClient.Test
                 ClientID = "EntClientIntegrationTests",
                 ClientSecret = "VerySecret",
                 RedirectUri = "oob:EntClientIntegrationTests",
-                Scope = "openid profile email"                
+                Scope = "openid profile email"
             };
             instance.OAuthConfig = oauthConfig;
 

@@ -63,6 +63,24 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\packages\NUnit.ConsoleRunner.3.7.0\tools\nunit3-console.exe">
+      <Link>nunit3-console.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\packages\NUnit.ConsoleRunner.3.7.0\tools\nunit3-console.exe.config">
+      <Link>nunit3-console.exe.config</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\packages\NUnit.ConsoleRunner.3.7.0\tools\nunit-agent.exe">
+      <Link>nunit-agent.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\packages\NUnit.ConsoleRunner.3.7.0\tools\nunit-agent.exe.config">
+      <Link>nunit-agent.exe.config</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
