@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 using Tenduke.EntitlementClient.Authorization;
 using Tenduke.EntitlementClient.Config;
 using Tenduke.EntitlementClient.Util;
@@ -9,7 +10,7 @@ namespace Tenduke.EntitlementClient.Test
     public class EntClientTests
     {
         [Test]
-        public void AuthzApiConfigWithExplicitConfiguration()
+        public void AuthzApiConfig_WithExplicitConfiguration()
         {
             var instance = new EntClient();
 
@@ -20,7 +21,7 @@ namespace Tenduke.EntitlementClient.Test
         }
 
         [Test]
-        public void AuthzApiConfigFromOAuthConfig()
+        public void AuthzApiConfig_FromOAuthConfig()
         {
             var instance = new EntClient();
 
@@ -34,7 +35,7 @@ namespace Tenduke.EntitlementClient.Test
         }
 
         [Test]
-        public void ComputerIdFromComputerIdentityConfig()
+        public void ComputerId_FromComputerIdentityConfig()
         {
             var instance = new EntClient();
 
@@ -45,7 +46,7 @@ namespace Tenduke.EntitlementClient.Test
         }
 
         [Test]
-        public void ComputerIdWithDefaultSettings()
+        public void ComputerId_WithDefaultSettings()
         {
             var instance = new EntClient();
 
@@ -55,7 +56,7 @@ namespace Tenduke.EntitlementClient.Test
         }
 
         [Test]
-        public void ComputerIdByComputerIdentityConfig()
+        public void ComputerId_ByComputerIdentityConfig()
         {
             var instance = new EntClient();
 
@@ -80,13 +81,14 @@ namespace Tenduke.EntitlementClient.Test
         }
 
         [Test]
-        public void AuthzApiSuccess()
+        public void AuthzApi_SuccessWithDerivedAuthzApiConfig()
         {
             var instance = new EntClient();
 
+            // Specify only OAuth configuration here, configuration for accessing AuthzApi is derived from this configuration
             var oauthConfig = new AuthorizationCodeGrantConfig()
             {
-                AuthzUri = "https://test/authz/"
+                AuthzUri = "https://test/oauth2/oauth_authorization/"
             };
             instance.OAuthConfig = oauthConfig;
 
@@ -97,7 +99,131 @@ namespace Tenduke.EntitlementClient.Test
             };
             instance.Authorization = authorization;
 
-            Assert.IsNotNull(instance.AuthzApi, "Initializing an AuthzApi instance for accessing the /authz/ API failed");
+            var result = instance.AuthzApi;
+            Assert.IsNotNull(result, "Initializing an AuthzApi instance for accessing the /authz/ API failed");
+            Assert.AreEqual("https://test/authz/", result.AuthzApiConfig.EndpointUri, "Invalid /authz/ API endpoint Uri");
+            Assert.AreEqual(accessTokenResponse, result.AccessToken, "Must use the specified access token response");
+            Assert.IsNotNull(result.ComputerId, "Computer id missing");
+        }
+
+        [Test]
+        public void AuthzApi_SuccessWithExplicitAuthzApiConfig()
+        {
+            var instance = new EntClient();
+
+            var authzApiConfig = new AuthzApiConfig()
+            {
+                EndpointUri = "https://test/authz/"
+            };
+            instance.AuthzApiConfig = authzApiConfig;
+
+            var accessTokenResponse = AccessTokenResponse.FromResponseObject("{\"access_token\":\"testat\"}", null);
+            var authorization = new AuthorizationCodeGrant()
+            {
+                AccessTokenResponse = accessTokenResponse
+            };
+            instance.Authorization = authorization;
+
+            var result = instance.AuthzApi;
+            Assert.IsNotNull(result, "Initializing an AuthzApi instance for accessing the /authz/ API failed");
+            Assert.AreEqual(authzApiConfig, result.AuthzApiConfig, "Must use the specified AuthzApiConfig object");
+            Assert.AreEqual(accessTokenResponse, result.AccessToken, "Must use the specified access token response");
+            Assert.IsNotNull(result.ComputerId, "Computer id missing");
+        }
+
+        [Test]
+        public void AuthzApi_WithOAuthAuthorizationError()
+        {
+            var instance = new EntClient();
+
+            var authzApiConfig = new AuthzApiConfig()
+            {
+                EndpointUri = "https://test/authz/"
+            };
+            instance.AuthzApiConfig = authzApiConfig;
+
+            var authorization = new AuthorizationCodeGrant()
+            {
+                Error = "test_error"
+            };
+            instance.Authorization = authorization;
+
+            Assert.That(() => instance.AuthzApi, Throws.InvalidOperationException);
+        }
+
+        [Test]
+        public void AuthzApi_WithoutOAuthAuthorization()
+        {
+            var instance = new EntClient();
+
+            var authzApiConfig = new AuthzApiConfig()
+            {
+                EndpointUri = "https://test/authz/"
+            };
+            instance.AuthzApiConfig = authzApiConfig;
+
+            Assert.That(() => instance.AuthzApi, Throws.InvalidOperationException);
+        }
+
+        [Test]
+        public void AuthzApi_WithoutConfig()
+        {
+            var instance = new EntClient();
+
+            Assert.That(() => instance.AuthzApi, Throws.InvalidOperationException);
+        }
+
+        [Test]
+        public void IsAuthorized()
+        {
+            var instance = new EntClient();
+
+            var accessTokenResponse = AccessTokenResponse.FromResponseObject("{\"access_token\":\"testat\"}", null);
+            var authorization = new AuthorizationCodeGrant()
+            {
+                AccessTokenResponse = accessTokenResponse
+            };
+            instance.Authorization = authorization;
+
+            Assert.IsTrue(instance.IsAuthorized(), "OAuth authorization with AccessTokenResponse is present, must return true");
+        }
+
+        [Test]
+        public void IsAuthorized_MissingAccessTokenResponse()
+        {
+            var instance = new EntClient();
+
+            var authorization = new AuthorizationCodeGrant();
+            instance.Authorization = authorization;
+
+            Assert.IsFalse(instance.IsAuthorized(), "AccessTokenResponse is missing, must return false");
+        }
+
+        [Test]
+        public void IsAuthorized_MissingOAuthAuthorization()
+        {
+            var instance = new EntClient();
+
+            Assert.IsFalse(instance.IsAuthorized(), "OAuth authorization is missing, must return false");
+        }
+
+        [Test]
+        public void ClearAuthorization()
+        {
+            var instance = new EntClient();
+
+            var accessTokenResponse = AccessTokenResponse.FromResponseObject("{\"access_token\":\"testat\"}", null);
+            var authorization = new AuthorizationCodeGrant()
+            {
+                AccessTokenResponse = accessTokenResponse
+            };
+            instance.Authorization = authorization;
+
+            Assert.IsTrue(instance.IsAuthorized(), "OAuth authorization with AccessTokenResponse is present, must return true");
+
+            instance.ClearAuthorization();
+
+            Assert.IsFalse(instance.IsAuthorized(), "OAuth authorization cleared, must return false");
         }
     }
 }
