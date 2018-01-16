@@ -7,7 +7,7 @@ using Tenduke.EntitlementClient.Util;
 namespace Tenduke.EntitlementClient.Test
 {
     [TestFixture]
-    public class EntClientTests
+    class EntClientTests
     {
         [Test]
         public void AuthzApiConfig_WithExplicitConfiguration()
