@@ -1,0 +1,27 @@
+== Sample application
+
+This is a C# / Windows Forms sample application using the 10Duke Entitlement client library.
+
+When starting the application, the application launches a sign-on process in an embedded browser window. If this window is closed and the process is interrupted, the sample application exits. In order for this process to work, the sample application must be configured correctly. The configuration settings are documented below.
+
+After a successfully completed sign-on process, UI of the sample application allows making licensing requests againts the 10Duke Entitlement service.
+
+=== Configuration settings
+
+After building the application, the output file +SampleApp.exe.config+ will contain example configuration settings in the +SampleApp.Properties.Settings+ configuration section. Configuration can be amended by changing these settings.
+
+.Sample application configuration settings
+[options="header"]
+|========================
+|Name        |Description |Example value
+|AuthzUri    |Url of the OAuth 2.0 authorization endpoint of the 10Duke Entitlement service |+https://entitlement-test.10duke.com/oauth2/authz/+
+|TokenUri    |Url of the OAuth 2.0 access token endpoint of the 10Duke Entitlement service |+https://entitlement-test.10duke.com/oauth2/access/+
+|UserInfoUri |Url of the OpenID Connect userinfo endpoint of the 10Duke Entitlement service |+https://entitlement-test.10duke.com/userinfo/+
+|ClientID    |OAuth 2.0 +client_id+ used by this client application for authenticating to the 10Duke Entitlement Service |+MyClientApp+
+|ClientSecret|OAuth 2.0 +client_secret+ used by this client application for authenticating to the 10Duke Entitlement Service |+VerySecret+
+|RedirectUri |OAuth 2.0 +redirect_uri+ used during the OAuth process for returning from the 10Duke Entitlement Service back to this client application |+oob:MyClientApp+
+|Scope       |OAuth 2.0 +scope+ to request |+openid profile email+
+|SignerKey   |Public key to use for verifying signatures of tokens returned by the 10Duke Entitlement service. The key must be an RSA public key in PEM / PKCS#1 format. |+-----BEGIN PUBLIC KEY-----+ +
++[THE FULL KEY STRING]+ +
++-----END PUBLIC KEY-----+
+|========================
