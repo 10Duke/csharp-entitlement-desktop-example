@@ -15,29 +15,20 @@ namespace SampleApp
     /// </summary>
     public partial class SampleAppForm : Form
     {
-        public static readonly RSA EntServerPublicKey = CryptoUtil.ReadRsaPublicKey(
-            "-----BEGIN PUBLIC KEY-----\n"
-            + "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1wRc5dsWBbIJfxay3SYP\n"
-            + "MYp/BaLEt0b26/QtwQbrKq6hgVH+euMWsSk6gf0GZiwHMFF+t8/WcsNOfcYMBEHV\n"
-            + "mGWSFeYb63IcFN+v3h2580kANzuKuqYnBeBOCN56lJf8q5FOUYQKFVuX/bvEKp+L\n"
-            + "1KkMErmIm9e5fkw70zCngxoXGK6qyWX01SPTVfd3UZdPv1H+VOoEpbDsI2yhg5xR\n"
-            + "jFAAsqyTYvHQaixiJqqw/T8+2/ond8AlxpzCa1UK9x2l1lMezlwHTHXyPh2ZMpwe\n"
-            + "lDBIosKLPHbaZyNwpU0iGOvrDJo8xlw4qGm/fClbaEWM8BCdbn/aKjWMN/t7FEaQ\n"
-            + "TQIDAQAB\n"
-            + "-----END PUBLIC KEY-----");
+        public static readonly RSA EntServerPublicKey = CryptoUtil.ReadRsaPublicKey(Properties.Settings.Default.SignerKey);
 
         /// <summary>
         /// OAuth 2.0 configuration for connecting this sample application to the 10Duke Entitlement service.
         /// </summary>
         public readonly AuthorizationCodeGrantConfig OAuthConfig = new AuthorizationCodeGrantConfig()
         {
-            AuthzUri = "https://test-account.10duke.com/oauth2/authz/",
-            TokenUri = "https://test-account.10duke.com/oauth2/access/",
-            UserInfoUri = "https://test-account.10duke.com/userinfo/",
-            ClientID = "SampleApp",
-            ClientSecret = "YohSi-u3",
-            RedirectUri = "oob:SampleApp",
-            Scope = "openid profile email",
+            AuthzUri = Properties.Settings.Default.AuthzUri,
+            TokenUri = Properties.Settings.Default.TokenUri,
+            UserInfoUri = Properties.Settings.Default.UserInfoUri,
+            ClientID = Properties.Settings.Default.ClientID,
+            ClientSecret = Properties.Settings.Default.ClientSecret,
+            RedirectUri = Properties.Settings.Default.RedirectUri,
+            Scope = Properties.Settings.Default.Scope,
             SignerKey = EntServerPublicKey
         };
 
