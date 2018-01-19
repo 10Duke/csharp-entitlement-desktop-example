@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Tenduke.EntitlementClient</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>10Duke Software</authors>
+    <owners>10Duke Software</owners>
+    <licenseUrl>https://github.com/10Duke/dotnet-client-entitlement/blob/master/LICENSE.adoc</licenseUrl>
+    <projectUrl>https://github.com/10Duke/dotnet-client-entitlement</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/10Duke/dotnet-client-entitlement/master/SampleApp/10duke.ico</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Publish signed assembly</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>entitlement licensing identity client library 10duke desktop</tags>
+  </metadata>
+</package>
