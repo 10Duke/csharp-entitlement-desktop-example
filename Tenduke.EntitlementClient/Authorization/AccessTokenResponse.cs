@@ -12,11 +12,17 @@ namespace Tenduke.EntitlementClient.Authorization
     [Serializable]
     public class AccessTokenResponse : ISerializable
     {
+        #region Private fields
+
         /// <summary>
         /// OpenID Connect ID token parsed from the access token response.
         /// </summary>
         [NonSerialized]
         private IDToken parsedIdToken;
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// The whole access token response as a dynamic object.
@@ -83,6 +89,31 @@ namespace Tenduke.EntitlementClient.Authorization
         /// <returns>Value of the response field, or <c>null</c> if no such field found or if response object not populated.</returns>
         public JValue this[string name] => ResponseObject?[name];
 
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccessTokenResponse"/> class.
+        /// </summary>
+        public AccessTokenResponse()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccessTokenResponse"/> class from serialized representation.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/>.</param>
+        /// <param name="context">The <see cref="StreamingContext"/>.</param>
+        protected AccessTokenResponse(SerializationInfo info, StreamingContext context)
+        {
+            ResponseObject = info.GetValue("ResponseObject", typeof(dynamic));
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AccessTokenResponse"/> class by the given
         /// access token JSON response.
@@ -125,5 +156,7 @@ namespace Tenduke.EntitlementClient.Authorization
             RSAParameters? rsaParameters = SignerKey == null ? (RSAParameters?) null : SignerKey.ExportParameters(false);
             info.AddValue("SignerKey", rsaParameters);
         }
+
+        #endregion
     }
 }
