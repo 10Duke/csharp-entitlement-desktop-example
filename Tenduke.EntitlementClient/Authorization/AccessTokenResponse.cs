@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Dynamic;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 
@@ -107,7 +108,15 @@ namespace Tenduke.EntitlementClient.Authorization
         /// <param name="context">The <see cref="StreamingContext"/>.</param>
         protected AccessTokenResponse(SerializationInfo info, StreamingContext context)
         {
-            ResponseObject = info.GetValue("ResponseObject", typeof(dynamic));
+            string responseJson = info.GetString("ResponseObject");
+            ResponseObject = responseJson == null ? null : JsonConvert.DeserializeObject(responseJson);
+            RSAParameters? rsaParameters = info.GetValue("SignerKey", typeof(RSAParameters?)) as RSAParameters?;
+            if (rsaParameters != null)
+            {
+                var rsa = new RSACryptoServiceProvider();
+                rsa.ImportParameters(rsaParameters.Value);
+                SignerKey = rsa;
+            }
         }
 
         #endregion
@@ -152,7 +161,8 @@ namespace Tenduke.EntitlementClient.Authorization
         /// <param name="context">The <see cref="StreamingContext"/>.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("ResponseObject", ResponseObject);
+            string responseJson = ResponseObject == null ? null : JsonConvert.SerializeObject(ResponseObject);
+            info.AddValue("ResponseObject", responseJson);
             RSAParameters? rsaParameters = SignerKey == null ? (RSAParameters?) null : SignerKey.ExportParameters(false);
             info.AddValue("SignerKey", rsaParameters);
         }

@@ -92,7 +92,7 @@ namespace Tenduke.EntitlementClient.Test
             };
             instance.OAuthConfig = oauthConfig;
 
-            var accessTokenResponse = AccessTokenResponse.FromResponseObject("{\"access_token\":\"testat\"}", null);
+            var accessTokenResponse = AccessTokenResponse.FromJsonStringResponse("{\"access_token\":\"testat\"}", null);
             var authorization = new AuthorizationCodeGrant()
             {
                 AccessTokenResponse = accessTokenResponse
@@ -117,7 +117,7 @@ namespace Tenduke.EntitlementClient.Test
             };
             instance.AuthzApiConfig = authzApiConfig;
 
-            var accessTokenResponse = AccessTokenResponse.FromResponseObject("{\"access_token\":\"testat\"}", null);
+            var accessTokenResponse = AccessTokenResponse.FromJsonStringResponse("{\"access_token\":\"testat\"}", null);
             var authorization = new AuthorizationCodeGrant()
             {
                 AccessTokenResponse = accessTokenResponse
@@ -178,7 +178,7 @@ namespace Tenduke.EntitlementClient.Test
         {
             var instance = new EntClient();
 
-            var accessTokenResponse = AccessTokenResponse.FromResponseObject("{\"access_token\":\"testat\"}", null);
+            var accessTokenResponse = AccessTokenResponse.FromJsonStringResponse("{\"access_token\":\"testat\"}", null);
             var authorization = new AuthorizationCodeGrant()
             {
                 AccessTokenResponse = accessTokenResponse
@@ -212,7 +212,7 @@ namespace Tenduke.EntitlementClient.Test
         {
             var instance = new EntClient();
 
-            var accessTokenResponse = AccessTokenResponse.FromResponseObject("{\"access_token\":\"testat\"}", null);
+            var accessTokenResponse = AccessTokenResponse.FromJsonStringResponse("{\"access_token\":\"testat\"}", null);
             var authorization = new AuthorizationCodeGrant()
             {
                 AccessTokenResponse = accessTokenResponse
@@ -231,7 +231,7 @@ namespace Tenduke.EntitlementClient.Test
         {
             var instance = new EntClient();
 
-            var accessTokenResponse = AccessTokenResponse.FromResponseObject("{\"access_token\":\"testat\"}", null);
+            var accessTokenResponse = AccessTokenResponse.FromJsonStringResponse("{\"access_token\":\"testat\"}", null);
             var authorization = new AuthorizationCodeGrant()
             {
                 AccessTokenResponse = accessTokenResponse

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
@@ -15,6 +16,14 @@ namespace SampleApp
     /// </summary>
     public partial class SampleAppForm : Form
     {
+        /// <summary>
+        /// Registry key for stored authorization.
+        /// </summary>
+        private readonly string REGISTRY_KEY_STORED_AUTHORIZATION = "Software\\10Duke\\Tenduke.EntitlementClient\\SampleApp";
+
+        /// <summary>
+        /// Public key to use for verifying 10Duke Entitlement Service signatures.
+        /// </summary>
         public static readonly RSA EntServerPublicKey = CryptoUtil.ReadRsaPublicKey(Properties.Settings.Default.SignerKey);
 
         /// <summary>
@@ -58,18 +67,95 @@ namespace SampleApp
         private void SampleAppForm_Shown(object sender, EventArgs e)
         {
             // This sample application always requires sign-on / authorization against the 10Duke entitlement service.
-            // Call AuthorizeSync for running the sign-on process in an embedded browser opened by the EntClient instance.
-            EntClient.AuthorizeSync();
+            EnsureAuthorization();
             if (EntClient.IsAuthorized())
             {
                 ShowWelcomeMessage();
                 ShowComputerId();
+                StoreAuthorization();
             }
             else
             {
                 // If the authorization process was cancelled, close this form. This will cause the whole application
                 // to be closed.
                 Close();
+            }
+        }
+
+        /// <summary>
+        /// Checks that either a previously stored valid authorization against the 10Duke Entitlement Service exists,
+        /// or launches embedded browser for signing on and getting the authorization.
+        /// </summary>
+        private void EnsureAuthorization()
+        {
+            if (!UseStoredAuthorization())
+            {
+                EntClient.AuthorizeSync();
+            }
+        }
+
+        /// <summary>
+        /// Checks value of the <c>StoreAuthorization</c> setting to determine if earlier authorization stored in the registry
+        /// should be read and used. If stored authorization is used and a stored authorization value is found in the registry,
+        /// initializes <see cref="EntClient"/> to use the stored authorization.
+        /// </summary>
+        /// <returns><c>true</c> if stored authorization is used and a stored authorization info is found in the registry,
+        /// <c>false</c> otherwise.</returns>
+        private bool UseStoredAuthorization()
+        {
+            bool retValue = false;
+            if (Properties.Settings.Default.StoreAuthorization)
+            {
+                var storedAuthorization = ReadAuthorizationInfoFromRegistry();
+                if (storedAuthorization != null)
+                {
+                    EntClient.AuthorizationSerializer.WriteAuthorization(storedAuthorization);
+                    retValue = true;
+                }
+            }
+
+            return retValue;
+        }
+
+        /// <summary>
+        /// Reads stored authorization info from registry.
+        /// </summary>
+        /// <returns>Authorization info serialized as a byte array, or <c>null</c> if no stored authorization information found.</returns>
+        private byte[] ReadAuthorizationInfoFromRegistry()
+        {
+            using (var key = Registry.CurrentUser.OpenSubKey(REGISTRY_KEY_STORED_AUTHORIZATION))
+            {
+                return key == null ? null : key.GetValue("StoredAuthorization") as byte[];
+            }
+        }
+
+        /// <summary>
+        /// Checks value of the <c>StoreAuthorization</c> setting to determine if authorization from the 10Duke Entitlement
+        /// Service should be stored in the registry. If value of the setting is <c>true</c>, stored current <see cref="EntClient.Authorization"/>
+        /// to the registry.
+        /// </summary>
+        /// <returns><c>true</c> if authorization was stored, <c>false</c> otherwise.</returns>
+        private bool StoreAuthorization()
+        {
+            bool retValue = false;
+            if (Properties.Settings.Default.StoreAuthorization)
+            {
+                StoreAuthorizationInfoToRegistry(EntClient.AuthorizationSerializer.ReadAuthorization());
+                retValue = true;
+            }
+
+            return retValue;
+        }
+
+        /// <summary>
+        /// Stores authorization info to registry.
+        /// </summary>
+        /// <param name="authorizationInfo">Serialized authorization info.</param>
+        private void StoreAuthorizationInfoToRegistry(byte[] authorizationInfo)
+        {
+            using (var key = Registry.CurrentUser.CreateSubKey(REGISTRY_KEY_STORED_AUTHORIZATION))
+            {
+                key.SetValue("StoredAuthorization", authorizationInfo);
             }
         }
 
@@ -250,10 +336,10 @@ namespace SampleApp
             /// <param name="authorizationDecision"><see cref="AuthorizationDecision"/> object describing authorization decision
             /// response received for the authorized item.</param>
             public AuthorizationDecisionListViewItem(string authorizedItem, AuthorizationDecision authorizationDecision)
-                : base(new string[] { authorizedItem, authorizationDecision[authorizedItem].ToString(), authorizationDecision.ToString() })
+                : base(new string[] { authorizedItem, authorizationDecision[authorizedItem]?.ToString(), authorizationDecision.ToString() })
             {
                 AuthorizedItem = authorizedItem;
-                Granted = (bool)authorizationDecision[authorizedItem];
+                Granted = authorizationDecision[authorizedItem] != null && (bool)authorizationDecision[authorizedItem];
                 AuthorizationDecision = authorizationDecision;
             }
         }
