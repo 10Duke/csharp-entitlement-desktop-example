@@ -6,6 +6,7 @@ namespace Tenduke.EntitlementClient.Config
     /// <summary>
     /// Configuration for accessing the <c>/authz/</c> API.
     /// </summary>
+    [Serializable]
     public class AuthzApiConfig
     {
         /// <summary>

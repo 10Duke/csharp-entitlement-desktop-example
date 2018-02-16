@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 
@@ -8,11 +9,13 @@ namespace Tenduke.EntitlementClient.Authorization
     /// <summary>
     /// OAuth 2.0 Access Token.
     /// </summary>
-    public class AccessTokenResponse
+    [Serializable]
+    public class AccessTokenResponse : ISerializable
     {
         /// <summary>
         /// OpenID Connect ID token parsed from the access token response.
         /// </summary>
+        [NonSerialized]
         private IDToken parsedIdToken;
 
         /// <summary>
@@ -109,6 +112,18 @@ namespace Tenduke.EntitlementClient.Authorization
                 ResponseObject = responseObj,
                 SignerKey = verifyWithKey
             };
+        }
+
+        /// <summary>
+        /// Gets data for serialization.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/>.</param>
+        /// <param name="context">The <see cref="StreamingContext"/>.</param>
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("ResponseObject", ResponseObject);
+            RSAParameters? rsaParameters = SignerKey == null ? (RSAParameters?) null : SignerKey.ExportParameters(false);
+            info.AddValue("SignerKey", rsaParameters);
         }
     }
 }

@@ -7,6 +7,7 @@ namespace Tenduke.EntitlementClient.Config
     /// Base class for OAuth 2.0 configuration objects used with OAuth 2.0 flows that may
     /// be implemented using a browser-based authorization flow.
     /// </summary>
+    [Serializable]
     public abstract class BrowserBasedAuthorizationConfig : OAuthConfig
     {
         /// <summary>

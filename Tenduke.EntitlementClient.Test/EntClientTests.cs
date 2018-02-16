@@ -225,5 +225,28 @@ namespace Tenduke.EntitlementClient.Test
 
             Assert.IsFalse(instance.IsAuthorized(), "OAuth authorization cleared, must return false");
         }
+
+        [Test]
+        public void AuthorizationSerializer_ReadAndWrite()
+        {
+            var instance = new EntClient();
+
+            var accessTokenResponse = AccessTokenResponse.FromResponseObject("{\"access_token\":\"testat\"}", null);
+            var authorization = new AuthorizationCodeGrant()
+            {
+                AccessTokenResponse = accessTokenResponse
+            };
+            instance.Authorization = authorization;
+
+            var serialized = instance.AuthorizationSerializer.ReadAuthorizationToBase64();
+            instance.ClearAuthorization();
+            instance.AuthorizationSerializer.WriteAuthorizationFromBase64(serialized);
+
+            var deserialized = instance.Authorization;
+            Assert.AreEqual(
+                "testat",
+                deserialized.AccessTokenResponse.AccessToken,
+                "Must have the original access token after serialization and deserialization");
+        }
     }
 }

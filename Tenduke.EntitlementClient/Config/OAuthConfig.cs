@@ -1,8 +1,11 @@
-﻿namespace Tenduke.EntitlementClient.Config
+﻿using System;
+
+namespace Tenduke.EntitlementClient.Config
 {
     /// <summary>
     /// Base class OAuth configuration objects.
     /// </summary>
+    [Serializable]
     public abstract class OAuthConfig
     {
         /// <summary>

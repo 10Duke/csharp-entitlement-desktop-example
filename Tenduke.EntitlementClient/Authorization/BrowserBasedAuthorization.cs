@@ -14,17 +14,39 @@ namespace Tenduke.EntitlementClient
     /// <typeparam name="T">Type of the implementing class.</typeparam>
     /// <typeparam name="O">OAuth 2.0 configuration object type.</typeparam>
     /// <typeparam name="A">Authorization process argument type.</typeparam>
+    [Serializable]
     public abstract class BrowserBasedAuthorization<T, O, A> : Authorization<T, O, A>
             where T : BrowserBasedAuthorization<T, O, A>
             where O : BrowserBasedAuthorizationConfig
             where A : BrowserBasedAuthorizationArgs
     {
+        #region Private fields
+
+        /// <summary>
+        /// Internal field holding WebBrowserForm used for displaying the embedded web browser.
+        /// </summary>
+        [NonSerialized]
+        private WebBrowserForm webBrowserForm;
+
+        #endregion
+
         #region Properties
 
         /// <summary>
         /// Form used for displaying the embedded web browser.
         /// </summary>
-        protected WebBrowserForm WebBrowserForm { get; set; }
+        protected WebBrowserForm WebBrowserForm
+        {
+            get
+            {
+                return webBrowserForm;
+            }
+
+            set
+            {
+                webBrowserForm = value;
+            }
+        }
 
         #endregion
 

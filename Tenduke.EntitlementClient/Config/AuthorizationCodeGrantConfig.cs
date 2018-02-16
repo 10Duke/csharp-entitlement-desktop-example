@@ -6,6 +6,7 @@ namespace Tenduke.EntitlementClient.Config
     /// Configuration for using the OAuth 2.0 Authorization Code Grant flow for
     /// communicating with the 10Duke Entitlement service.
     /// </summary>
+    [Serializable]
     public class AuthorizationCodeGrantConfig : BrowserBasedAuthorizationConfig
     {
         /// <summary>

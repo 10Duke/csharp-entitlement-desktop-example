@@ -34,5 +34,8 @@ lDBIosKLPHbaZyNwpU0iGOvrDJo8xlw4qGm/fClbaEWM8BCdbn/aKjWMN/t7FEaQ
 TQIDAQAB
 -----END PUBLIC KEY-----</Value>
     </Setting>
+    <Setting Name="StoreAuthorization" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

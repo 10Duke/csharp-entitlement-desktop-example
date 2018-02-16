@@ -93,6 +93,7 @@
     <Compile Include="Util\CefSharpUtil.cs" />
     <Compile Include="Util\ComputerIdentity.cs" />
     <Compile Include="Util\CryptoUtil.cs" />
+    <Compile Include="Util\EntClientAuthorizationSerializer.cs" />
     <Compile Include="WebBrowserForm.cs">
       <SubType>Form</SubType>
     </Compile>

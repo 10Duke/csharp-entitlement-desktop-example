@@ -7,6 +7,7 @@ namespace Tenduke.EntitlementClient.Authorization
     /// <summary>
     /// Base class for authorization implementations, containing the authorization result data.
     /// </summary>
+    [Serializable]
     public abstract class AuthorizationInfo
     {
         #region Properties
@@ -43,6 +44,7 @@ namespace Tenduke.EntitlementClient.Authorization
     /// <typeparam name="T">Type of the implementing class.</typeparam>
     /// <typeparam name="O">OAuth 2.0 configuration object type.</typeparam>
     /// <typeparam name="A">Authorization process argument type.</typeparam>
+    [Serializable]
     public abstract class Authorization<T, O, A> : AuthorizationInfo, IDisposable
             where T : Authorization<T, O, A>
             where O : OAuthConfig

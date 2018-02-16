@@ -102,5 +102,17 @@ TQIDAQAB
                 return ((string)(this["SignerKey"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool StoreAuthorization {
+            get {
+                return ((bool)(this["StoreAuthorization"]));
+            }
+            set {
+                this["StoreAuthorization"] = value;
+            }
+        }
     }
 }

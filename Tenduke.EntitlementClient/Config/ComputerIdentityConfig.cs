@@ -1,10 +1,12 @@
-﻿using Tenduke.EntitlementClient.Util;
+﻿using System;
+using Tenduke.EntitlementClient.Util;
 
 namespace Tenduke.EntitlementClient.Config
 {
     /// <summary>
     /// Configuration used for determining how this system is identified against the 10Duke Entitlement service.
     /// </summary>
+    [Serializable]
     public class ComputerIdentityConfig
     {
         /// <summary>

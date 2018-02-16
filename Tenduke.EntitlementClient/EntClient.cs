@@ -143,6 +143,18 @@ namespace Tenduke.EntitlementClient
             }
         }
 
+        /// <summary>
+        /// Gets an <see cref="EntClientAuthorizationSerializer"/> for reading and writing <see cref="Authorization"/>
+        /// of this object by binary serialization.
+        /// </summary>
+        public EntClientAuthorizationSerializer AuthorizationSerializer
+        {
+            get
+            {
+                return new EntClientAuthorizationSerializer() { EntClient = this };
+            }
+        }
+
         #endregion
 
         #region Application-wide initialization and clean-up
