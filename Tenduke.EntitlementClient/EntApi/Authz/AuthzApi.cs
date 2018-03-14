@@ -95,6 +95,22 @@ namespace Tenduke.EntitlementClient.EntApi.Authz
             return AuthorizationDecision.FromServerResponse(consumptionId, responseBody, responseContentType, AuthzApiConfig.SignerKey);
         }
 
+        /// <summary>
+        /// Releases consumed licenses.
+        /// </summary>
+        /// <param name="consumptionIds">The consumption ids, as returned in the value of the <c>jti</c> authorization decision field.</param>
+        /// <param name="responseType">The <see cref="ResponseType"/> requested from the server, or <c>null</c> for server default.</param>
+        /// <returns>List of <see cref="AuthorizationDecision"/> objects representing the authorization decision response from the server.</returns>
+        public IList<AuthorizationDecision> ReleaseLicenses(IList<string> consumptionIds, ResponseType responseType = null)
+        {
+            var releaseLicenseUri = BuildReleaseLicenseUri(consumptionIds, responseType);
+            var responseData = SendAuthorizationRequest(releaseLicenseUri, "POST");
+            var responseBody = responseData.Key;
+            var responseContentType = responseData.Value;
+
+            return AuthorizationDecision.FromServerResponse(consumptionIds, responseBody, responseContentType, AuthzApiConfig.SignerKey);
+        }
+
         #endregion
 
         #region Internal methods
