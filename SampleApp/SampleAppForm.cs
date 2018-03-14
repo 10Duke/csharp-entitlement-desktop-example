@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
@@ -207,12 +208,15 @@ namespace SampleApp
         /// <param name="e">The event arguments.</param>
         private void buttonRequestAuthorizationDecision_Click(object sender, EventArgs e)
         {
-            var authorizedItem = textBoxAuthorizedItemName.Text;
+            var authorizedItems = textBoxAuthorizedItemName.Text.Split(',').Select(item => item.Trim()).ToArray();
             var responseType = ResponseType.FromExtension(comboBoxResponseFormat.Text);
             var consumeMode = comboBoxConsumeMode.Text;
             var consume = consumeMode == "consume";
-            var authorizationDecision = EntClient.AuthzApi.CheckOrConsume(authorizedItem, consume, responseType);
-            ShowAuthorizationDecision(authorizedItem, authorizationDecision);
+            var authorizationDecisions = EntClient.AuthzApi.CheckOrConsume(authorizedItems, consume, responseType);
+            for (int i = 0; i < authorizedItems.Length; i++)
+            {
+                ShowAuthorizationDecision(authorizedItems[i], authorizationDecisions[i]);
+            }
         }
 
         /// <summary>

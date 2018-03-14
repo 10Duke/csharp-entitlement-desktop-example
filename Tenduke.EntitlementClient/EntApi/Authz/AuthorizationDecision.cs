@@ -1,4 +1,7 @@
 ﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -39,14 +42,19 @@ namespace Tenduke.EntitlementClient.EntApi.Authz
         /// Parses an authorization decision response and initializes a new instance of the
         /// <see cref="AuthorizationDecision"/> class.
         /// </summary>
-        /// <param name="authorizedItemName">Name of the item for which the authorization decision response is returned.</param>
-        /// <param name="responseBody">Authorization decision response from the server, as string.</param>
+        /// <param name="authorizedItem">Name of the item for which the authorization decision response is returned.</param>
+        /// <param name="responseBody">Authorization decision response from the server, as a string.</param>
         /// <param name="contentType">The response content type.</param>
         /// <param name="verifyWithKey">RSA public key to use for verifying the token signature. If <c>null</c>, no verification is done.</param>
         /// <returns><see cref="AuthorizationDecision"/> object representing the authorization decision response.</returns>
         /// <exception cref="Jose.IntegrityException">Thrown if the response is in JWT format and if token signature verification fails.</exception>
         public static AuthorizationDecision FromServerResponse(string authorizedItem, string responseBody, string contentType, RSA verifyWithKey)
         {
+            if (string.IsNullOrEmpty(responseBody))
+            {
+                throw new InvalidServerResponseException("The server returned an empty response");
+            }
+
             switch (contentType)
             {
                 case "application/jwt":
@@ -55,6 +63,70 @@ namespace Tenduke.EntitlementClient.EntApi.Authz
                     return FromJson(responseBody);
                 default:
                     return FromPlainText(responseBody, authorizedItem);
+            }
+        }
+
+        /// <summary>
+        /// Parses an authorization decision response and returns a list of <see cref="AuthorizationDecision"/> objects.
+        /// </summary>
+        /// <param name="authorizedItems">Names of the items for which the authorization decision response is returned.</param>
+        /// <param name="responseBody">Authorization decision response from the server, as a string.</param>
+        /// <param name="contentType">The response content type.</param>
+        /// <param name="verifyWithKey">RSA public key to use for verifying the token signature. If <c>null</c>, no verification is done.</param>
+        /// <returns>List of <see cref="AuthorizationDecision"/> objects representing the authorization decision responses for the given
+        /// <paramref name="authorizedItems"/>.</returns>
+        /// <exception cref="Jose.IntegrityException">Thrown if the response is in JWT format and if token signature verification fails.</exception>
+        public static IList<AuthorizationDecision> FromServerResponse(IList<string> authorizedItems, string responseBody, string contentType, RSA verifyWithKey)
+        {
+            if (string.IsNullOrEmpty(responseBody))
+            {
+                throw new InvalidServerResponseException("The server returned an empty response");
+            }
+
+            if (authorizedItems == null)
+            {
+                return null;
+            }
+
+            if (authorizedItems.Count == 0)
+            {
+                return new List<AuthorizationDecision>(0);
+            }
+
+            var isJsonResponse = "application/json" == contentType;
+            if (isJsonResponse && authorizedItems.Count != 1)
+            {
+                throw new InvalidServerResponseException("JSON responses can only used for returning authorization decision for a single item");
+            }
+
+            var responseAuthzDecisionTokens = isJsonResponse ? new string[] { responseBody } : responseBody.Split('&');
+            if (responseAuthzDecisionTokens.Length != authorizedItems.Count)
+            {
+                throw new InvalidServerResponseException(
+                    "Expected response for "
+                    + authorizedItems.Count
+                    + " authorized items, but received "
+                    + responseAuthzDecisionTokens.Length
+                    + " response tokens");
+            }
+
+            switch (contentType)
+            {
+                case "application/jwt":
+                    return responseAuthzDecisionTokens.Select(token => FromJwt(token, verifyWithKey)).ToList();
+                case "application/json":
+                    var authorizationDecisionFromJson = FromJson(responseAuthzDecisionTokens[0]);
+                    return new AuthorizationDecision[] { authorizationDecisionFromJson };
+                default:
+                    var authorizationDecisionsFromPlainText = new List<AuthorizationDecision>(authorizedItems.Count);
+                    for (int i = 0; i < authorizedItems.Count; i++)
+                    {
+                        var authorizedItem = authorizedItems[i];
+                        var responseToken = responseAuthzDecisionTokens[i];
+                        var authorizationDecision = FromPlainText(responseToken, authorizedItem);
+                        authorizationDecisionsFromPlainText.Add(authorizationDecision);
+                    }
+                    return authorizationDecisionsFromPlainText;
             }
         }
 

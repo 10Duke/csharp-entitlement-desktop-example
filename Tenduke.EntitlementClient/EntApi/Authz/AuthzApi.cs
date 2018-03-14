@@ -58,6 +58,28 @@ namespace Tenduke.EntitlementClient.EntApi.Authz
         }
 
         /// <summary>
+        /// Sends a request to the <c>/authz/</c> endpoint for getting authorization decisions. The request
+        /// may only check for authorizations, or it may consume licenses.
+        /// </summary>
+        /// <param name="authorizedItems">Names of the items for which authorization is requested.</param>
+        /// <param name="responseType">The <see cref="ResponseType"/> requested from the server, or <c>null</c> for server default.</param>
+        /// <param name="consume"><c>true</c> to consume a license, <c>false</c> otherwise.</param>
+        /// <returns><see cref="AuthorizationDecision"/> object representing the authorization decision response from the server.</returns>
+        public IList<AuthorizationDecision> CheckOrConsume(IList<string> authorizedItems, bool consume = false, ResponseType responseType = null)
+        {
+            var authzDecisionRequestUri = BuildCheckOrConsumeUri(
+                authorizedItems,
+                responseType,
+                consume);
+            var method = consume ? "POST" : "GET";
+            var responseData = SendAuthorizationRequest(authzDecisionRequestUri, method);
+            var responseBody = responseData.Key;
+            var responseContentType = responseData.Value;
+
+            return AuthorizationDecision.FromServerResponse(authorizedItems, responseBody, responseContentType, AuthzApiConfig.SignerKey);
+        }
+
+        /// <summary>
         /// Releases a consumed license.
         /// </summary>
         /// <param name="consumptionId">The consumption id, as returned in the value of the <c>jti</c> authorization decision field.</param>

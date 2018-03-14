@@ -84,6 +84,7 @@
     <Compile Include="Config\AuthorizationCodeGrantConfig.cs" />
     <Compile Include="EntApi\Authz\AuthorizationDecision.cs" />
     <Compile Include="EntApi\Authz\AuthzApi.cs" />
+    <Compile Include="EntApi\InvalidServerResponseException.cs" />
     <Compile Include="EntApi\ResponseType.cs" />
     <Compile Include="Util\CefSharpResolver.cs" />
     <Compile Include="Util\CefSharpResolverArgs.cs" />
