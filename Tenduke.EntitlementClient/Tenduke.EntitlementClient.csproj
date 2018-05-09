@@ -63,29 +63,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Authorization\AccessTokenResponse.cs" />
-    <Compile Include="Authorization\Authorization.cs" />
-    <Compile Include="Authorization\AuthorizationArgs.cs" />
     <Compile Include="Authorization\AuthorizationCodeGrant.cs" />
-    <Compile Include="Authorization\AuthorizationCodeGrantArgs.cs" />
-    <Compile Include="Authorization\AuthorizationCancelledEventArgs.cs" />
-    <Compile Include="Authorization\AuthorizationCompletedEventArgs.cs" />
-    <Compile Include="Authorization\AuthorizationEventArgsBase.cs" />
-    <Compile Include="Authorization\AuthorizationFailedEventArgs.cs" />
-    <Compile Include="Authorization\AuthorizationStartedEventArgs.cs" />
-    <Compile Include="Authorization\AfterAuthorizationEventArgs.cs" />
-    <Compile Include="Authorization\BeforeAuthorizationEventArgs.cs" />
-    <Compile Include="Authorization\BrowserBasedAuthorizationArgs.cs" />
-    <Compile Include="Authorization\IDToken.cs" />
-    <Compile Include="Config\AuthzApiConfig.cs" />
-    <Compile Include="Config\BrowserBasedAuthorizationConfig.cs" />
     <Compile Include="Config\ComputerIdentityConfig.cs" />
-    <Compile Include="Config\OAuthConfig.cs" />
-    <Compile Include="Config\AuthorizationCodeGrantConfig.cs" />
-    <Compile Include="EntApi\Authz\AuthorizationDecision.cs" />
-    <Compile Include="EntApi\Authz\AuthzApi.cs" />
-    <Compile Include="EntApi\InvalidServerResponseException.cs" />
-    <Compile Include="EntApi\ResponseType.cs" />
     <Compile Include="Util\CefSharpResolver.cs" />
     <Compile Include="Util\CefSharpResolverArgs.cs" />
     <Compile Include="EntClient.cs" />
@@ -93,7 +72,6 @@
     <Compile Include="Authorization\BrowserBasedAuthorization.cs" />
     <Compile Include="Util\CefSharpUtil.cs" />
     <Compile Include="Util\ComputerIdentity.cs" />
-    <Compile Include="Util\CryptoUtil.cs" />
     <Compile Include="Util\EntClientAuthorizationSerializer.cs" />
     <Compile Include="WebBrowserForm.cs">
       <SubType>Form</SubType>
