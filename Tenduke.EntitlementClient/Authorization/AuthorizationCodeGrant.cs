@@ -4,7 +4,8 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Web;
-using Tenduke.EntitlementClient.Config;
+using Tenduke.Client.Authorization;
+using Tenduke.Client.Config;
 
 namespace Tenduke.EntitlementClient.Authorization
 {
@@ -14,7 +15,7 @@ namespace Tenduke.EntitlementClient.Authorization
     /// </summary>
     [Serializable]
     public class AuthorizationCodeGrant
-        : BrowserBasedAuthorization<AuthorizationCodeGrant, AuthorizationCodeGrantConfig, AuthorizationCodeGrantArgs>
+        : BrowserBasedAuthorization<AuthorizationCodeGrant, IAuthorizationCodeGrantConfig, AuthorizationCodeGrantArgs>
     {
         #region Public constants
 
@@ -173,7 +174,7 @@ namespace Tenduke.EntitlementClient.Authorization
             AccessTokenResponse =
                 json["access_token"] == null
                 ? null
-                : Tenduke.EntitlementClient.Authorization.AccessTokenResponse.FromResponseObject(json, OAuthConfig.SignerKey);
+                : Client.Authorization.AccessTokenResponse.FromResponseObject(json, OAuthConfig.SignerKey);
         }
 
         #endregion

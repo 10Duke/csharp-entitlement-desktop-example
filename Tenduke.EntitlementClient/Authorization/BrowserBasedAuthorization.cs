@@ -2,8 +2,8 @@
 using System.Collections.Specialized;
 using System.Web;
 using System.Windows.Forms;
-using Tenduke.EntitlementClient.Authorization;
-using Tenduke.EntitlementClient.Config;
+using Tenduke.Client.Authorization;
+using Tenduke.Client.Config;
 
 namespace Tenduke.EntitlementClient
 {
@@ -17,7 +17,7 @@ namespace Tenduke.EntitlementClient
     [Serializable]
     public abstract class BrowserBasedAuthorization<T, O, A> : Authorization<T, O, A>
             where T : BrowserBasedAuthorization<T, O, A>
-            where O : BrowserBasedAuthorizationConfig
+            where O : IBrowserBasedAuthorizationConfig
             where A : BrowserBasedAuthorizationArgs
     {
         #region Private fields
