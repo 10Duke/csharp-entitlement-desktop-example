@@ -4,11 +4,11 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
+using Tenduke.Client.Config;
+using Tenduke.Client.EntApi;
+using Tenduke.Client.EntApi.Authz;
+using Tenduke.Client.Util;
 using Tenduke.EntitlementClient;
-using Tenduke.EntitlementClient.Config;
-using Tenduke.EntitlementClient.EntApi;
-using Tenduke.EntitlementClient.EntApi.Authz;
-using Tenduke.EntitlementClient.Util;
 
 namespace SampleApp
 {
