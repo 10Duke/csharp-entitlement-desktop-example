@@ -83,7 +83,7 @@ namespace Tenduke.EntitlementClient
         /// <summary>
         /// OAuth 2.0 access token for accessing APIs that require authorization.
         /// </summary>
-        public new string AccessToken
+        public override string AccessToken
         {
             get
             {
@@ -93,6 +93,37 @@ namespace Tenduke.EntitlementClient
             set
             {
                 throw new InvalidOperationException("AccessToken can not be set directly, set Authorization instead");
+            }
+        }
+
+        /// <summary>
+        /// Configuration for communicating with the <c>/authz/</c> API of the 10Duke Entitlement service.
+        /// </summary>
+        public override IAuthzApiConfig AuthzApiConfig
+        {
+            get
+            {
+                return base.AuthzApiConfig ?? Client.Config.AuthzApiConfig.FromOAuthConfig(OAuthConfig);
+            }
+
+            set
+            {
+                base.AuthzApiConfig = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets an <see cref="AuthzApi"/> object for accessing the <c>/authz/</c> API of the 10Duke Identity and Entitlement service.
+        /// Please note that the OAuth authentication / authorization process must be successfully completed before
+        /// getting the <see cref="AuthzApi"/> object, and the <see cref="AccessToken"/> must be available.
+        /// </summary>
+        public new AuthzApi AuthzApi
+        {
+            get
+            {
+                var retValue = base.AuthzApi;
+                retValue.ComputerId = ComputerId;
+                return retValue;
             }
         }
 
