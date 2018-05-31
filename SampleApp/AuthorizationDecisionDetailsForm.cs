@@ -1,5 +1,5 @@
 ﻿using System.Windows.Forms;
-using Tenduke.EntitlementClient.EntApi.Authz;
+using Tenduke.Client.EntApi.Authz;
 
 namespace SampleApp
 {

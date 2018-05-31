@@ -4,11 +4,11 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
+using Tenduke.Client.Config;
+using Tenduke.Client.EntApi;
+using Tenduke.Client.EntApi.Authz;
+using Tenduke.Client.Util;
 using Tenduke.EntitlementClient;
-using Tenduke.EntitlementClient.Config;
-using Tenduke.EntitlementClient.EntApi;
-using Tenduke.EntitlementClient.EntApi.Authz;
-using Tenduke.EntitlementClient.Util;
 
 namespace SampleApp
 {
@@ -206,13 +206,13 @@ namespace SampleApp
         /// </summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void buttonRequestAuthorizationDecision_Click(object sender, EventArgs e)
+        private async void buttonRequestAuthorizationDecision_Click(object sender, EventArgs e)
         {
             var authorizedItems = textBoxAuthorizedItemName.Text.Split(',').Select(item => item.Trim()).ToArray();
             var responseType = ResponseType.FromExtension(comboBoxResponseFormat.Text);
             var consumeMode = comboBoxConsumeMode.Text;
             var consume = consumeMode == "consume";
-            var authorizationDecisions = EntClient.AuthzApi.CheckOrConsume(authorizedItems, consume, responseType);
+            var authorizationDecisions = await EntClient.AuthzApi.CheckOrConsumeAsync(authorizedItems, consume, responseType);
             for (int i = 0; i < authorizedItems.Length; i++)
             {
                 ShowAuthorizationDecision(authorizedItems[i], authorizationDecisions[i]);
@@ -296,11 +296,11 @@ namespace SampleApp
         /// </summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void buttonReleaseLicense_Click(object sender, EventArgs e)
+        private async void buttonReleaseLicense_Click(object sender, EventArgs e)
         {
             var selectedItem = (AuthorizationDecisionListViewItem)listViewAuthorizationDecisions.SelectedItems[0];
             var tokenId = (string)selectedItem.AuthorizationDecision["jti"];
-            var response = EntClient.AuthzApi.ReleaseLicense(tokenId, ResponseType.JWT);
+            var response = await EntClient.AuthzApi.ReleaseLicenseAsync(tokenId, ResponseType.JWT);
             bool successfullyReleased = response[tokenId] != null && (bool)response[tokenId] == true;
             bool noConsumptionFound = "noConsumptionFoundById" == (string)response[tokenId + "_errorCode"];
             if (successfullyReleased || noConsumptionFound)

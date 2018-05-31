@@ -2,6 +2,8 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using Tenduke.Client.Config;
+using Tenduke.Client.Util;
 using Tenduke.EntitlementClient.Config;
 using Tenduke.EntitlementClient.Util;
 using WireMock.RequestBuilders;

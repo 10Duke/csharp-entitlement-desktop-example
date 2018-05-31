@@ -11,8 +11,8 @@
     <iconUrl>https://raw.githubusercontent.com/10Duke/dotnet-client-entitlement/master/SampleApp/10duke.ico</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Publish signed assembly</releaseNotes>
-    <copyright>Copyright 2018</copyright>
-    <tags>entitlement licensing identity client library 10duke desktop</tags>
+    <releaseNotes>Refactoring to use Tenduke.Client via NuGet</releaseNotes>
+    <copyright>Copyright © 2018- 10Duke Software</copyright>
+    <tags>Entitlement Licensing Identity 10Duke Desktop WinForms</tags>
   </metadata>
 </package>

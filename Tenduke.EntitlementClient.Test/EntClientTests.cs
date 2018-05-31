@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
+using Tenduke.Client.Authorization;
+using Tenduke.Client.Config;
 using Tenduke.EntitlementClient.Authorization;
 using Tenduke.EntitlementClient.Config;
 using Tenduke.EntitlementClient.Util;
@@ -102,7 +104,7 @@ namespace Tenduke.EntitlementClient.Test
             var result = instance.AuthzApi;
             Assert.IsNotNull(result, "Initializing an AuthzApi instance for accessing the /authz/ API failed");
             Assert.AreEqual("https://test/authz/", result.AuthzApiConfig.EndpointUri, "Invalid /authz/ API endpoint Uri");
-            Assert.AreEqual(accessTokenResponse, result.AccessToken, "Must use the specified access token response");
+            Assert.AreEqual(accessTokenResponse.AccessToken, result.AccessToken, "Must use the specified access token response");
             Assert.IsNotNull(result.ComputerId, "Computer id missing");
         }
 
@@ -127,7 +129,7 @@ namespace Tenduke.EntitlementClient.Test
             var result = instance.AuthzApi;
             Assert.IsNotNull(result, "Initializing an AuthzApi instance for accessing the /authz/ API failed");
             Assert.AreEqual(authzApiConfig, result.AuthzApiConfig, "Must use the specified AuthzApiConfig object");
-            Assert.AreEqual(accessTokenResponse, result.AccessToken, "Must use the specified access token response");
+            Assert.AreEqual(accessTokenResponse.AccessToken, result.AccessToken, "Must use the specified access token response");
             Assert.IsNotNull(result.ComputerId, "Computer id missing");
         }
 

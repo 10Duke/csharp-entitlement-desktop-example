@@ -1,4 +1,4 @@
-== .NET client library for the 10Duke Entitlement service
+== .NET desktop application client library for the 10Duke Entitlement service
 
 Client library for .NET desktop applications, for using services of the 10Duke Entitlement. Main features are:
 
