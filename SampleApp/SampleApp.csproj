@@ -93,6 +93,9 @@
     <Reference Include="Tenduke.Client, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Tenduke.Client.2.0.0\lib\netstandard2.0\Tenduke.Client.dll</HintPath>
     </Reference>
+    <Reference Include="Tenduke.EntitlementClient, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Tenduke.EntitlementClient.3.0.0\lib\net461\Tenduke.EntitlementClient.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorizationDecisionDetailsForm.cs">
@@ -139,12 +142,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Tenduke.EntitlementClient\Tenduke.EntitlementClient.csproj">
-      <Project>{321c78c6-4537-452c-9fa1-3553b276955b}</Project>
-      <Name>Tenduke.EntitlementClient</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
