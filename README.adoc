@@ -109,7 +109,7 @@ Tenduke.EntitlementClient.EntApi.ResponseType responseType = Tenduke.Entitlement
 // I want to start using the licensed feature, i.e. check out the license
 bool consume = true;
 
-Tenduke.EntitlementClient.EntApi.Authz.AuthorizationDecision response = entClient.AuthzApi.CheckOrConsume(licenseToCheck, responseType, consume);
+Tenduke.EntitlementClient.EntApi.Authz.AuthorizationDecision response = await entClient.AuthzApi.CheckOrConsumeAsync(licenseToCheck, responseType, consume);
 
 // The AuthorizationDecision response object describes success of the
 // request with metadata. Basic success check example below:
@@ -129,5 +129,5 @@ string checkOutId = ... value of jti response attribute from calling CheckOrCons
 
 Tenduke.EntitlementClient.EntApi.ResponseType responseType = Tenduke.EntitlementClient.EntApi.ResponseType.JWT;
 
-Tenduke.EntitlementClient.EntApi.Authz.AuthorizationDecision response = entClient.AuthzApi.ReleaseLicense(checkOutId, responseType);
+Tenduke.EntitlementClient.EntApi.Authz.AuthorizationDecision response = await entClient.AuthzApi.ReleaseLicenseAsync(checkOutId, responseType);
 ----
