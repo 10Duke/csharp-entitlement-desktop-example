@@ -212,7 +212,7 @@ namespace SampleApp
             var responseType = ResponseType.FromExtension(comboBoxResponseFormat.Text);
             var consumeMode = comboBoxConsumeMode.Text;
             var consume = consumeMode == "consume";
-            var authorizationDecisions = await EntClient.AuthzApi.CheckOrConsumeAsync(authorizedItems, consume, responseType);
+            var authorizationDecisions = await GetAuthzApi().CheckOrConsumeAsync(authorizedItems, consume, responseType);
             for (int i = 0; i < authorizedItems.Length; i++)
             {
                 ShowAuthorizationDecision(authorizedItems[i], authorizationDecisions[i]);
@@ -300,7 +300,7 @@ namespace SampleApp
         {
             var selectedItem = (AuthorizationDecisionListViewItem)listViewAuthorizationDecisions.SelectedItems[0];
             var tokenId = (string)selectedItem.AuthorizationDecision["jti"];
-            var response = await EntClient.AuthzApi.ReleaseLicenseAsync(tokenId, ResponseType.JWT);
+            var response = await GetAuthzApi().ReleaseLicenseAsync(tokenId, ResponseType.JWT);
             bool successfullyReleased = response[tokenId] != null && (bool)response[tokenId] == true;
             bool noConsumptionFound = "noConsumptionFoundById" == (string)response[tokenId + "_errorCode"];
             if (successfullyReleased || noConsumptionFound)
@@ -311,6 +311,17 @@ namespace SampleApp
             {
                 MessageBox.Show(response.ToString(), "Error");
             }
+        }
+
+        /// <summary>
+        /// Gets <see cref="AuthzApi"/> for accessing the authorization api.
+        /// </summary>
+        /// <returns>The <see cref="AuthzApi"/>.</returns>
+        private AuthzApi GetAuthzApi()
+        {
+            var retValue = EntClient.AuthzApi;
+            retValue.ComputerId = textBoxComputerId.Text;
+            return retValue;
         }
 
         /// <summary>
