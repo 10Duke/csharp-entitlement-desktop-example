@@ -1,3 +1,5 @@
+IMPORTANT: This repository contains an old client library implementation. Different .NET client libraries have been harmonized and current versions can be found in https://github.com/10Duke/10duke-dotnet-client[this repository].
+
 == .NET desktop application client library for the 10Duke Entitlement service
 
 Client library for .NET desktop applications, for using services of the 10Duke Entitlement. Main features are:
